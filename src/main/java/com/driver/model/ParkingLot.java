@@ -18,6 +18,11 @@ public class ParkingLot {
     public ParkingLot() {
     }
 
+    public ParkingLot(String name, String address) {
+        this.name = name;
+        this.address = address;
+    }
+
     public ParkingLot(String name, String address, List<Spot> spotList) {
         this.name = name;
         this.address = address;
