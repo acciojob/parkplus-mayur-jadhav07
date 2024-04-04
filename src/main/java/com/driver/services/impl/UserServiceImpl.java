@@ -1,3 +1,4 @@
+
 package com.driver.services.impl;
 
 import com.driver.model.User;
@@ -14,7 +15,6 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     UserRepository userRepository4;
-
     @Override
     public void deleteUser(Integer userId) {
         userRepository4.deleteById(userId);
@@ -22,13 +22,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updatePassword(Integer userId, String password) {
-        Optional<User> optionalUser = userRepository4.findById(userId);
-        User user = null;
-        if (optionalUser.isPresent()) {
-            user = optionalUser.get();
-            user.setPassword(password);
-            user = userRepository4.save(user);
-        }
+        Optional<User> optUser = userRepository4.findById(userId);
+        User userObj = optUser.get();
+        userObj.setPassword(password);
+        User user = userRepository4.save(userObj);
         return user;
     }
 
@@ -36,8 +33,8 @@ public class UserServiceImpl implements UserService {
     public void register(String name, String phoneNumber, String password) {
         User user = new User();
         user.setName(name);
-        user.setPhoneNumber(phoneNumber);
         user.setPassword(password);
+        user.setPhoneNumber(phoneNumber);
         userRepository4.save(user);
     }
 }
