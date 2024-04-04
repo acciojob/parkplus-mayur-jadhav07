@@ -1,3 +1,4 @@
+
 package com.driver.services.impl;
 
 import com.driver.model.ParkingLot;
@@ -19,14 +20,13 @@ public class ParkingLotServiceImpl implements ParkingLotService {
     ParkingLotRepository parkingLotRepository1;
     @Autowired
     SpotRepository spotRepository1;
-
     @Override
     public ParkingLot addParkingLot(String name, String address) {
-        ParkingLot parkingLot = new ParkingLot();
+        ParkingLot parkingLot=new ParkingLot();
         parkingLot.setName(name);
         parkingLot.setAddress(address);
-        parkingLot = parkingLotRepository1.save(parkingLot);
-        return parkingLot;
+        ParkingLot ParkingLotObjSave  = parkingLotRepository1.save(parkingLot);
+        return ParkingLotObjSave;
     }
 
     @Override
@@ -54,23 +54,25 @@ public class ParkingLotServiceImpl implements ParkingLotService {
 
     @Override
     public void deleteSpot(int spotId) {
-        if (spotRepository1.existsById(spotId) == false) return;
         spotRepository1.deleteById(spotId);
     }
 
     @Override
     public Spot updateSpot(int parkingLotId, int spotId, int pricePerHour) {
-        ParkingLot parkingLot = parkingLotRepository1.findById(parkingLotId).get();
-        Spot spot = null;
-        for (Spot spot1 : parkingLot.getSpotList()) {
-            if (spot1.getId() == spotId) {
-                spot1.setPricePerHour(pricePerHour);
-                spot = spot1;
-                spotRepository1.save(spot1);
-                break;
+        Optional<ParkingLot> parkingLotOpt = parkingLotRepository1.findById(parkingLotId);
+        ParkingLot parkingLotObj = parkingLotOpt.get();
+        List<Spot> spotList = parkingLotObj.getSpotList();
+        Spot spotObj = null;
+        for (Spot spot : spotList) {
+            if (spot.getId() == spotId) {
+                spot.setPricePerHour(pricePerHour);
+                spotObj = spot;
             }
         }
-        return spot;
+        parkingLotObj.setSpotList(spotList);
+        parkingLotRepository1.save(parkingLotObj);
+        Spot toReturnSpot = spotRepository1.save(spotObj);
+        return toReturnSpot;
     }
 
     @Override
