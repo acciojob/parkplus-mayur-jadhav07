@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import com.driver.model.*;
 
+import java.util.NoSuchElementException;
+
 @RestController
 @RequestMapping("/parking-lots")
 public class ParkingLotController {
@@ -30,8 +32,16 @@ public class ParkingLotController {
     public ResponseEntity<Spot> addSpot(@PathVariable int parkingLotId, @RequestParam Integer numberOfWheels, @RequestParam Integer pricePerHour) {
         //create a new spot in the parkingLot with given id
         //the spot type should be the next biggest type in case the number of wheels are not 2 or 4, for 4+ wheels, it is others
-        Spot newSpot = parkingLotService.addSpot(parkingLotId, numberOfWheels, pricePerHour);
-        return new ResponseEntity<>(newSpot, HttpStatus.CREATED);
+        try {
+            Spot newSpot = parkingLotService.addSpot(parkingLotId, numberOfWheels, pricePerHour);
+            return new ResponseEntity<>(newSpot, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            // Handle IllegalArgumentException (e.g., invalid input parameters)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            // Handle any other unexpected exceptions
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping("/spot/{spotId}/delete")
