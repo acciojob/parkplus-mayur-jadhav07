@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ParkingLotServiceImpl implements ParkingLotService {
@@ -30,9 +31,17 @@ public class ParkingLotServiceImpl implements ParkingLotService {
 
     @Override
     public Spot addSpot(int parkingLotId, Integer numberOfWheels, Integer pricePerHour) {
+        // Check if parameters are null
+        if (numberOfWheels == null || pricePerHour == null) {
+            throw new IllegalArgumentException("numberOfWheels and pricePerHour cannot be null");
+        }
+
+        // Initialize spot object
         Spot spot = new Spot();
         spot.setPricePerHour(pricePerHour);
         spot.setOccupied(Boolean.FALSE);
+
+        // Determine spot type based on the number of wheels
         if (numberOfWheels <= 2) {
             spot.setSpotType(SpotType.TWO_WHEELER);
         } else if (numberOfWheels <= 4) {
@@ -40,10 +49,21 @@ public class ParkingLotServiceImpl implements ParkingLotService {
         } else {
             spot.setSpotType(SpotType.OTHERS);
         }
-        ParkingLot parkingLot = parkingLotRepository1.findById(parkingLotId).get();
-        spot.setParkingLot(parkingLot);
+
+        // Retrieve parking lot from repository
+        Optional<ParkingLot> parkingLotOptional = parkingLotRepository1.findById(parkingLotId);
+        if (!parkingLotOptional.isPresent()) {
+            throw new IllegalArgumentException("Parking lot with ID " + parkingLotId + " not found");
+        }
+        ParkingLot parkingLot = parkingLotOptional.get();
+
+        // Add spot to parking lot
         parkingLot.getSpotList().add(spot);
+        spot.setParkingLot(parkingLot);
+
+        // Save changes
         parkingLotRepository1.save(parkingLot);
+
         return spot;
     }
 
