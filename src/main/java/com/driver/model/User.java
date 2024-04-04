@@ -9,12 +9,23 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     List<Reservation> reservationList;
 
     private String name;
     private String phoneNumber;
     private String password;
+
+    public User() {
+    }
+
+    public User(Integer id, String name, String phoneNumber, String password, List<Reservation> reservationList) {
+        this.id = id;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.password = password;
+        this.reservationList = reservationList;
+    }
 
     public int getId() {
         return id;

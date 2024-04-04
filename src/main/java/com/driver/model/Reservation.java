@@ -17,8 +17,19 @@ public class Reservation {
     @JoinColumn
     private Spot spot;
 
-    @OneToOne(mappedBy = "reservation",cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "reservation", cascade = CascadeType.ALL)
     private Payment payment;
+
+    public Reservation() {
+    }
+
+    public Reservation(Integer id, Integer numberOfHours, User user, Spot spot, Payment payment) {
+        this.id = id;
+        this.numberOfHours = numberOfHours;
+        this.user = user;
+        this.spot = spot;
+        this.payment = payment;
+    }
 
     private int numberOfHours;
 
